@@ -1,4 +1,4 @@
-<!-- Start of Bot: 9/25/2017 	Balance: 48,923.00 -->
+<!-- Start of Bot: 9/25/2017 	Balance: 48,923.00 test -->
 <html>
 	<head>
 		<title>Forex Follow Trend</title>
