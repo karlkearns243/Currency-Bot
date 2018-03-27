@@ -1,0 +1,114 @@
+a:15:{
+	s:12:"Make By Year";
+	s:227:"SELECT issyr AS `Year`, F.Make AS `Full Make`, COUNT(FullMakeID) AS `Make Count` 
+		   FROM UsableTexasData U
+		   INNER JOIN FullMakes F on U.FullMakeID = F.id
+		   WHERE FullMakeID <> '' AND FullMakeID IS NOT NULL AND issyr NOT IN ('', '0000') AND issyr IN ('2012','2013','2014','2015','2016','2017') 
+		   GROUP BY FullMakeID, issyr;";
+	
+	s:13:"Basic Zipcode";
+	s:187:"SELECT zipcde AS `Zipcode`, COUNT(zipcde) AS `Zipcode Count` 
+		   FROM UsableTexasData U
+		   WHERE zipcde NOT IN ('', 00000)
+		   GROUP BY zipcde 
+		   HAVING COUNT(zipcde) > 10;";
+	
+	s:5:"Color";
+	s:946:"SELECT REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(clr1 , 'BLK', 'Black'), 'BLU', 'Blue'), 'BRO', 'Brown'), 'GRY', 'Gray'), 'GRN', 'Green'), 'YEL', 'Yellow'), 'WHI', 'White'), 'ONG', 'Orange'), 'PLE', 'Purple'), 'BGE', 'Beige'), 'MAR', 'Burgundy'), 'SIL', 'Silver'), 'GLD', 'Gold'), 'PNK', 'Pink'), 'TAN', 'Tan'), 'RED', 'Red') AS `Color 1`,
+				  REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(clr2 , 'BLK', 'Black'), 'BLU', 'Blue'), 'BRO', 'Brown'), 'GRY', 'Gray'), 'GRN', 'Green'), 'YEL', 'Yellow'), 'WHI', 'White'), 'ONG', 'Orange'), 'PLE', 'Purple'), 'BGE', 'Beige'), 'MAR', 'Burgundy'), 'SIL', 'Silver'), 'GLD', 'Gold'), 'PNK', 'Pink'), 'TAN', 'Tan'), 'RED', 'Red') AS `Color 2`, 
+				  COUNT(id) AS `Color Count` 
+		   FROM UsableTexasData U
+		   WHERE clr1 <> '' 
+		   GROUP BY clr1, clr2 
+		   ORDER BY clr1, clr2;";
+	
+	s:20:"New Owner by ZipCode";
+	s:259:"SELECT issyr AS `Year`, zipcde AS `Zipcode`, matchstat, COUNT(id) AS `Count` 
+		   FROM UsableTexasData U
+		   WHERE matchstat IN ('NewOwner','NewToFile') AND issyr > 2012 
+		   GROUP BY matchstat, zipcde, issyr 
+		   ORDER BY issyr desc, zipcde, Count;";
+	
+	s:11:"Basic Model";
+	s:130:"SELECT F.Model AS `Full Model`, COUNT(FullModelID) AS `Model Count` 
+		   FROM `UsableTexasData` U
+		   INNER JOIN FullModels F ON U.FullModelID = F.id
+		   WHERE FullModelID <> '' AND FullModelID IS NOT NULL
+		   GROUP BY FullModelID;";
+	
+	s:10:"Basic Make";
+	s:119:"SELECT F.Make AS `Full Make`, COUNT(FullMakeID) AS `Make Count` 
+		   FROM `UsableTexasData` U
+		   INNER JOIN FullMakes F ON U.FullMakeID = F.id
+		   WHERE FullMakeID <> '' AND FullMakeID IS NOT NULL
+		   GROUP BY FullMakeID;";
+	
+	s:6:"Fields";
+	s:30:"SHOW FIELDS FROM `UsableTexasData`";
+	
+	s:13:"Model By Year";
+	s:251:"SELECT `issyr` AS `Year`, F.Model AS `Full Model`, COUNT(`FullModelID`) AS `Model Count` 
+		   FROM `UsableTexasData` U
+		   INNER JOIN FullModels F ON U.FullModelID = F.id
+		   WHERE `FullModelID` <> '' AND FullModelID IS NOT NULL AND `issyr` NOT IN ('', '0000') AND `issyr` IN ('2012','2013','2014','2015','2016','2017') 
+		   GROUP BY `FullModelID`, `issyr`;";
+	
+	s:18:"Make/Model By Year";
+	s:288:"SELECT `issyr` AS `Year`, A.Make AS `Full Make`, O.Model AS `Full Model`, COUNT(`FullModelID`) AS `Model Count` 
+		   FROM `UsableTexasData` U
+		   INNER JOIN FullModels O ON U.FullModelID = O.id
+		   INNER JOIN FullMakes A ON U.FullMakeID = A.id
+		   WHERE `FullModelID` <> '' AND FullModelID IS NOT NULL AND `issyr` NOT IN ('', '0000') AND `issyr` IN ('2012','2013','2014','2015','2016','2017') 
+		   GROUP BY U.`FullMakeID`, U.`FullModelID`, `issyr`;";
+	
+	s:11:"Sample Data";
+	s:35:"SELECT * FROM UsableTexasData LIMIT 10;";
+	
+	s:30:"Top Model by County Percentage";
+	s:463:"SELECT F.Model, CONCAT(FORMAT((COUNT(U.id)/ (C.Count)) * 100,2),'%') AS `Percent` 
+		   FROM UsableTexasData U 
+		   INNER JOIN (SELECT COUNT(U.id) AS `Count`, U.County
+														FROM UsableTexasData U 
+														INNER JOIN FullModels F ON U.FullModelID = F.id 
+														WHERE U.FullModelID IS NOT NULL AND (issyr = '2017' OR texyr = '2017') 
+														GROUP BY U.County) C on U.County = C.County
+		   INNER JOIN FullModels F ON U.FullModelID = F.id 
+		   WHERE U.FullModelID IS NOT NULL AND (issyr = '2017' OR texyr = '2017') 
+		   GROUP BY U.County, U.FullModelID 
+		   ORDER BY COUNT(U.id) DESC 
+		   LIMIT 10;";
+	
+	s:25:"Top Model by County Count";
+	s:249:"SELECT F.Model, COUNT(U.id) AS `Count` 
+		   FROM UsableTexasData U 
+		   INNER JOIN FullModels F ON U.FullModelID = F.id 
+		   WHERE U.FullModelID IS NOT NULL AND (issyr = '2017' OR texyr = '2017') 
+		   GROUP BY U.County, U.FullModelID 
+		   ORDER BY COUNT(U.id) DESC 
+		   LIMIT 10;";
+	
+	s:27:"Top County Performers Count";
+	s:242:"SELECT C.County, COUNT(U.CountyID) AS `Count` 
+		   FROM UsableTexasData U 
+		   INNER JOIN Counties C ON U.CountyID = C.CountyID 
+		   WHERE U.FullModelID IS NOT NULL AND (issyr = '2017' OR texyr = '2017') 
+		   GROUP BY U.County ORDER BY count(U.id) DESC 
+		   LIMIT 10;";
+	
+	s:17:"Top Zipcode Count";
+	s:230:"SELECT U.zipcde, COUNT(U.zipcde) AS `Count` 
+		   FROM UsableTexasData U 
+		   WHERE U.FullModelID IS NOT NULL AND (issyr = '2017' OR texyr = '2017') AND Zipcde BETWEEN '73301' AND '88589' 
+		   GROUP BY U.zipcde ORDER BY COUNT(U.id) DESC 
+		   LIMIT 10;";
+	
+	s:22:"Top Zipcode Percentage";
+	s:412:"SELECT U.zipcde, CONCAT(FORMAT(COUNT(zipcde)/(SELECT COUNT(zipcde) 
+														 FROM UsableTexasData U
+														 WHERE FullModelID IS NOT NULL AND (issyr = '2017' OR texyr = '2017') AND Zipcde BETWEEN '73301' AND '88589') * 100,2),'%') AS `Percent` 
+		   FROM UsableTexasData U 
+		   WHERE U.FullModelID IS NOT NULL AND (issyr = '2017' OR texyr = '2017') AND Zipcde BETWEEN '73301' AND '88589' 
+		   GROUP BY U.zipcde 
+		   ORDER BY COUNT(U.id) DESC 
+		   LIMIT 10;";
+}
